@@ -1054,10 +1054,3 @@ input[type="text"]:focus, textarea:focus { border-color:#6f8793; }
 @media (prefers-reduced-motion: reduce) {
   #snowCanvas, #finalSnowCanvas { display:none !important; }
 }
-
-/* Android stability: preserve the design while reducing expensive rendering work. */
-@media (max-width: 820px) {
-  body.android-safe .section,
-  body.android-safe .photo-slot,
-  body.android-safe .floral-card { transform: translateZ(0); }
-}

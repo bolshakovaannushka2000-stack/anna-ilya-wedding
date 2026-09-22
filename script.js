@@ -1,334 +1,367 @@
-(function () {
-  'use strict';
+// ================================================================
+// АННА & ИЛЬЯ — свадебное приглашение
+// Все ключевые настройки для будущих изменений собраны ниже.
+// ================================================================
 
-  var CONFIG = {
-    weddingDate: '2027-02-14T15:00:00+03:00',
-    rsvpEndpoint: 'https://script.google.com/macros/s/AKfycby7JGVFu_VE_teYmrRs39bFLHeBq-CzicK9kIVn1rSwjIMLj3Kf9Xix29FfA0RlHPAF/exec',
-    photos: {
-      'couple-hero': 'assets/embedded-05-afc38c87d318.jpg',
-      'couple-story': 'assets/embedded-06-243384b6f43a.jpg',
-      'venue': 'assets/venue-winter-1.jpg',
-      'venue-alt': 'assets/venue-winter-2.jpg',
-      'dress-women': 'assets/embedded-09-e05d8d5b3196.jpg',
-      'dress-men': 'assets/embedded-10-29de64f0167e.jpg'
-    }
-  };
+const CONFIG = {
+  // ДАТА СВАДЬБЫ. Формат ISO с часовым поясом Москвы.
+  weddingDate: '2027-02-14T15:00:00+03:00',
 
-  function byId(id) { return document.getElementById(id); }
-  function addClass(el, cls) { if (el && el.classList) el.classList.add(cls); }
-  function removeClass(el, cls) { if (el && el.classList) el.classList.remove(cls); }
-  function toggleClass(el, cls, state) { if (el && el.classList) el.classList.toggle(cls, !!state); }
-  function each(list, fn) { for (var i = 0; i < list.length; i += 1) fn(list[i], i); }
-  function pad(n, len) { var s = String(n); while (s.length < len) s = '0' + s; return s; }
+  // RSVP: вставьте сюда URL опубликованного Google Apps Script Web App.
+  // Ответы отправляются в Google Apps Script: таблица + Telegram.
+  rsvpEndpoint: 'https://script.google.com/macros/s/AKfycby7JGVFu_VE_teYmrRs39bFLHeBq-CzicK9kIVn1rSwjIMLj3Kf9Xix29FfA0RlHPAF/exec',
 
-  var intro = byId('intro');
-  var stage = byId('envelopeStage');
-  var openBtn = byId('openInvitation');
-  var openHint = byId('openHint');
-  var main = byId('mainContent');
-  var weddingMusic = byId('weddingMusic');
-  var musicToggle = byId('musicToggle');
-  var musicLabel = byId('musicLabel');
-  var isAndroid = /Android/i.test(navigator.userAgent || '');
-
-  function updateMusicUI() {
-    toggleClass(musicToggle, 'is-playing', !!(weddingMusic && !weddingMusic.paused));
+  // Фото: просто положите изображения в папку assets с этими именами.
+  // МОЖНО МЕНЯТЬ ПУТИ, ЕСЛИ ВЫ ПЕРЕИМЕНУЕТЕ ФАЙЛЫ.
+  photos: {
+    'couple-hero': 'assets/embedded-05-afc38c87d318.jpg',
+    'couple-story': 'assets/embedded-06-243384b6f43a.jpg',
+    'venue': 'assets/venue-winter-1.jpg',
+    'venue-alt': 'assets/venue-winter-2.jpg',
+    'dress-women': 'assets/embedded-09-e05d8d5b3196.jpg',
+    'dress-men': 'assets/embedded-10-29de64f0167e.jpg'
   }
+};
 
-  function startWeddingMusic() {
-    if (!weddingMusic) return;
-    weddingMusic.volume = 0.42;
-    addClass(musicToggle, 'is-visible');
-    addClass(musicLabel, 'is-visible');
-    try {
-      var p = weddingMusic.play();
-      if (p && typeof p.then === 'function') p.then(updateMusicUI, updateMusicUI);
-    } catch (e) { updateMusicUI(); }
-    window.setTimeout(function () { removeClass(musicLabel, 'is-visible'); }, 5200);
+const intro = document.getElementById('intro');
+const stage = document.getElementById('envelopeStage');
+const openBtn = document.getElementById('openInvitation');
+const openHint = document.getElementById('openHint');
+const main = document.getElementById('mainContent');
+const weddingMusic = document.getElementById('weddingMusic');
+const musicToggle = document.getElementById('musicToggle');
+const musicLabel = document.getElementById('musicLabel');
+let musicStarted = false;
+
+function updateMusicUI() {
+  const playing = weddingMusic && !weddingMusic.paused;
+  musicToggle?.classList.toggle('is-playing', playing);
+}
+
+function startWeddingMusic() {
+  if (!weddingMusic) return;
+  weddingMusic.volume = 0.42;
+  musicToggle?.classList.add('is-visible');
+  musicLabel?.classList.add('is-visible');
+  const promise = weddingMusic.play();
+  if (promise && typeof promise.then === 'function') {
+    promise.then(() => { musicStarted = true; updateMusicUI(); })
+      .catch(() => { updateMusicUI(); });
   }
+  setTimeout(() => musicLabel?.classList.remove('is-visible'), 5200);
+}
 
-  if (musicToggle) {
-    musicToggle.addEventListener('click', function () {
-      if (!weddingMusic) return;
-      if (weddingMusic.paused) {
-        try {
-          var p = weddingMusic.play();
-          if (p && typeof p.then === 'function') p.then(updateMusicUI, updateMusicUI);
-        } catch (e) { updateMusicUI(); }
-      } else {
-        weddingMusic.pause();
-        updateMusicUI();
-      }
-    });
+musicToggle?.addEventListener('click', () => {
+  if (!weddingMusic) return;
+  if (weddingMusic.paused) {
+    weddingMusic.play().then(updateMusicUI).catch(updateMusicUI);
+  } else {
+    weddingMusic.pause();
+    updateMusicUI();
   }
-  if (weddingMusic) {
-    weddingMusic.addEventListener('play', updateMusicUI);
-    weddingMusic.addEventListener('pause', updateMusicUI);
-  }
+});
+weddingMusic?.addEventListener('play', updateMusicUI);
+weddingMusic?.addEventListener('pause', updateMusicUI);
 
-  addClass(document.body, 'locked');
+document.body.classList.add('locked');
 
-  function Snowfall(canvas, count, subtle) {
+function openInvitation() {
+  if (stage.classList.contains('opening')) return;
+  stage.classList.add('opening');
+  startWeddingMusic();
+  snowIntro.boost = 2.1;
+  snowIntro.burst(window.innerWidth < 700 ? 54 : 96);
+
+  setTimeout(() => snowIntro.burst(window.innerWidth < 700 ? 34 : 64), 420);
+  setTimeout(() => stage.classList.add('zooming'), 1550);
+  setTimeout(() => {
+    main.classList.add('is-visible');
+    main.setAttribute('aria-hidden', 'false');
+    intro.classList.add('is-gone');
+    snowIntro.active = false;
+    snowIntro.ctx.clearRect(0, 0, snowIntro.w, snowIntro.h);
+    document.body.classList.remove('locked');
+    window.scrollTo({ top: 0, behavior: 'auto' });
+    revealObserver();
+  }, 2550);
+}
+openBtn.addEventListener('click', openInvitation);
+openHint.addEventListener('click', openInvitation);
+
+// ---------- Более лёгкий и плавный снег на Canvas ----------
+class Snowfall {
+  constructor(canvas, count = 40, subtle = false) {
     this.canvas = canvas;
-    this.ctx = canvas && canvas.getContext ? canvas.getContext('2d') : null;
-    this.count = count || 30;
-    this.subtle = !!subtle;
+    this.ctx = canvas.getContext('2d', { alpha: true });
+    this.count = count;
+    this.subtle = subtle;
     this.flakes = [];
     this.bursts = [];
     this.boost = 1;
-    this.active = !!this.ctx;
+    this.active = true;
     this.last = 0;
-    this.interval = 1000 / (isAndroid ? 20 : 30);
-    this.dpr = Math.min(window.devicePixelRatio || 1, isAndroid ? 1 : 1.5);
-    var self = this;
-    this.resizeHandler = function () { self.resize(); };
-    this.tickHandler = function (ts) { self.tick(ts); };
-    if (this.ctx) {
-      window.addEventListener('resize', this.resizeHandler, false);
-      this.resize();
-      if (window.requestAnimationFrame) window.requestAnimationFrame(this.tickHandler);
-    }
+    this.interval = 1000 / 30; // ограничиваем до ~30 FPS для плавности без лагов
+    this.dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    this.resize = this.resize.bind(this);
+    this.tick = this.tick.bind(this);
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        this.active = false;
+      }
+    });
+    window.addEventListener('resize', this.resize, { passive: true });
+    this.resize();
+    requestAnimationFrame(this.tick);
   }
-  Snowfall.prototype.resize = function () {
-    if (!this.ctx || !this.canvas) return;
-    var rect = this.canvas.getBoundingClientRect();
-    this.w = Math.max(1, rect.width || window.innerWidth || 1);
-    this.h = Math.max(1, rect.height || window.innerHeight || 1);
-    this.canvas.width = Math.round(this.w * this.dpr);
-    this.canvas.height = Math.round(this.h * this.dpr);
-    if (this.ctx.setTransform) this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
-    var mobileFactor = window.innerWidth < 700 ? (isAndroid ? 0.35 : 0.58) : 1;
-    var target = Math.max(8, Math.round(this.count * mobileFactor));
-    this.flakes = [];
-    for (var i = 0; i < target; i += 1) this.flakes.push(this.createFlake(true));
-  };
-  Snowfall.prototype.createFlake = function (randomY) {
-    var depth = Math.random();
+  resize() {
+    const rect = this.canvas.getBoundingClientRect();
+    this.w = Math.max(1, rect.width);
+    this.h = Math.max(1, rect.height);
+    this.canvas.width = this.w * this.dpr;
+    this.canvas.height = this.h * this.dpr;
+    this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+    const mobileFactor = window.innerWidth < 700 ? 0.58 : 1;
+    const targetCount = Math.max(12, Math.round(this.count * mobileFactor));
+    this.flakes = Array.from({ length: targetCount }, () => this.createFlake(true));
+  }
+  createFlake(randomY = false) {
+    const depth = Math.random();
     return {
-      x: Math.random() * (this.w || 1),
-      y: randomY ? Math.random() * (this.h || 1) : -20,
+      x: Math.random() * this.w,
+      y: randomY ? Math.random() * this.h : -20,
       r: 0.8 + depth * (this.subtle ? 1.8 : 2.8),
       vy: 0.3 + depth * (this.subtle ? 0.55 : 0.78),
       vx: (Math.random() - 0.5) * (this.subtle ? 0.16 : 0.22),
       sway: Math.random() * Math.PI * 2,
       alpha: (this.subtle ? 0.2 : 0.28) + depth * (this.subtle ? 0.22 : 0.38)
     };
-  };
-  Snowfall.prototype.burst = function (amount) {
-    if (!this.ctx) return;
-    var safeAmount = isAndroid ? Math.min(amount || 20, 22) : (amount || 28);
-    for (var i = 0; i < safeAmount; i += 1) {
+  }
+  burst(amount = 28) {
+    for (let i = 0; i < amount; i += 1) {
       this.bursts.push({
-        x: this.w * (0.34 + Math.random() * 0.32), y: this.h * (0.28 + Math.random() * 0.1),
-        vx: (Math.random() - 0.5) * 2.4, vy: -1.5 - Math.random() * 1.6,
-        r: 1 + Math.random() * 2.8, alpha: 0.45 + Math.random() * 0.35,
-        life: 22 + Math.random() * 12, age: 0
+        x: this.w * (0.34 + Math.random() * 0.32),
+        y: this.h * (0.28 + Math.random() * 0.1),
+        vx: (Math.random() - 0.5) * 2.4,
+        vy: -1.5 - Math.random() * 1.6,
+        r: 1 + Math.random() * 2.8,
+        alpha: 0.45 + Math.random() * 0.35,
+        life: 22 + Math.random() * 12,
+        age: 0
       });
     }
-  };
-  Snowfall.prototype.drawCircle = function (x, y, r, alpha) {
+  }
+  drawCircle(x, y, r, alpha) {
     this.ctx.globalAlpha = alpha;
-    this.ctx.beginPath(); this.ctx.arc(x, y, r, 0, Math.PI * 2);
-    this.ctx.fillStyle = '#ffffff'; this.ctx.fill(); this.ctx.globalAlpha = 1;
-  };
-  Snowfall.prototype.tick = function (ts) {
-    var self = this;
-    if (window.requestAnimationFrame) window.requestAnimationFrame(function (t) { self.tick(t); });
-    if (!this.active || !this.ctx) return;
+    this.ctx.beginPath();
+    this.ctx.arc(x, y, r, 0, Math.PI * 2);
+    this.ctx.fillStyle = '#ffffff';
+    this.ctx.fill();
+    this.ctx.globalAlpha = 1;
+  }
+  tick(ts) {
+    requestAnimationFrame(this.tick);
+    if (!this.active) return;
     if (ts - this.last < this.interval) return;
     this.last = ts;
+
     this.ctx.clearRect(0, 0, this.w, this.h);
-    var i, f;
-    for (i = 0; i < this.flakes.length; i += 1) {
-      f = this.flakes[i];
-      f.sway += 0.012; f.y += f.vy * this.boost; f.x += (f.vx + Math.sin(f.sway) * 0.14) * this.boost;
-      if (f.y > this.h + 24 || f.x < -24 || f.x > this.w + 24) this.flakes[i] = f = this.createFlake(false);
+
+    for (const f of this.flakes) {
+      f.sway += 0.012;
+      f.y += f.vy * this.boost;
+      f.x += (f.vx + Math.sin(f.sway) * 0.14) * this.boost;
+      if (f.y > this.h + 24 || f.x < -24 || f.x > this.w + 24) Object.assign(f, this.createFlake(false));
       this.drawCircle(f.x, f.y, f.r, f.alpha);
     }
-    var kept = [];
-    for (i = 0; i < this.bursts.length; i += 1) {
-      var p = this.bursts[i]; p.age += 1; p.x += p.vx; p.y += p.vy; p.vy += 0.04;
-      var a = p.alpha * (1 - p.age / p.life);
+
+    this.bursts = this.bursts.filter(p => {
+      p.age += 1;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.04;
+      const a = p.alpha * (1 - p.age / p.life);
       if (a > 0) this.drawCircle(p.x, p.y, p.r, a);
-      if (p.age < p.life) kept.push(p);
-    }
-    this.bursts = kept;
+      return p.age < p.life;
+    });
+
     this.boost += (1 - this.boost) * 0.06;
-  };
-
-  var reduced = false;
-  try { reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) {}
-  var snowIntro = new Snowfall(byId('snowCanvas'), reduced ? 16 : 54, false);
-  var snowFinal = new Snowfall(byId('finalSnowCanvas'), reduced ? 6 : 14, true);
-  snowFinal.active = false;
-
-  function showMain() {
-    addClass(main, 'is-visible');
-    if (main) main.setAttribute('aria-hidden', 'false');
-    addClass(intro, 'is-gone');
-    snowIntro.active = false;
-    if (snowIntro.ctx) snowIntro.ctx.clearRect(0, 0, snowIntro.w, snowIntro.h);
-    removeClass(document.body, 'locked');
-    window.scrollTo(0, 0);
-    revealObserver();
   }
+}
 
-  function openInvitation() {
-    if (!stage || stage.classList.contains('opening')) return;
-    addClass(stage, 'opening');
-    startWeddingMusic();
-    snowIntro.boost = 1.7;
-    snowIntro.burst(window.innerWidth < 700 ? 20 : 70);
-    window.setTimeout(function () { snowIntro.burst(window.innerWidth < 700 ? 14 : 42); }, 420);
-    window.setTimeout(function () { addClass(stage, 'zooming'); }, 1400);
-    window.setTimeout(showMain, isAndroid ? 2050 : 2350);
-  }
-  if (openBtn) openBtn.addEventListener('click', openInvitation);
-  if (openHint) openHint.addEventListener('click', openInvitation);
+const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const snowIntro = new Snowfall(document.getElementById('snowCanvas'), prefersReduced ? 22 : 72);
+const snowFinal = new Snowfall(document.getElementById('finalSnowCanvas'), prefersReduced ? 8 : 20, true);
+snowFinal.active = false;
 
-  var finaleSection = byId('finale');
-  if ('IntersectionObserver' in window && finaleSection) {
-    var finalObserver = new IntersectionObserver(function (entries) {
-      each(entries, function (entry) {
-        snowFinal.active = !!(entry.isIntersecting && !document.hidden);
-        if (!snowFinal.active && snowFinal.ctx) snowFinal.ctx.clearRect(0, 0, snowFinal.w, snowFinal.h);
-      });
-    }, { threshold: 0.12 });
-    finalObserver.observe(finaleSection);
-  }
+const finaleSection = document.getElementById('finale');
+if ('IntersectionObserver' in window && finaleSection) {
+  const finalObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      snowFinal.active = entry.isIntersecting && !document.hidden;
+      if (!snowFinal.active) snowFinal.ctx.clearRect(0, 0, snowFinal.w, snowFinal.h);
+    });
+  }, { threshold: 0.12 });
+  finalObserver.observe(finaleSection);
+}
 
-  var weddingMs = new Date(CONFIG.weddingDate).getTime();
-  function updateCountdown() {
-    var diff = Math.max(0, weddingMs - new Date().getTime());
-    var totalSeconds = Math.floor(diff / 1000);
-    var days = Math.floor(totalSeconds / 86400);
-    var hours = Math.floor((totalSeconds % 86400) / 3600);
-    var minutes = Math.floor((totalSeconds % 3600) / 60);
-    var seconds = totalSeconds % 60;
-    if (byId('days')) byId('days').textContent = pad(days, 3);
-    if (byId('hours')) byId('hours').textContent = pad(hours, 2);
-    if (byId('minutes')) byId('minutes').textContent = pad(minutes, 2);
-    if (byId('seconds')) byId('seconds').textContent = pad(seconds, 2);
-  }
-  updateCountdown(); window.setInterval(updateCountdown, 1000);
+// ---------- Countdown ----------
+const weddingMs = new Date(CONFIG.weddingDate).getTime();
+function updateCountdown() {
+  const diff = Math.max(0, weddingMs - Date.now());
+  const totalSeconds = Math.floor(diff / 1000);
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  document.getElementById('days').textContent = String(days).padStart(3,'0');
+  document.getElementById('hours').textContent = String(hours).padStart(2,'0');
+  document.getElementById('minutes').textContent = String(minutes).padStart(2,'0');
+  document.getElementById('seconds').textContent = String(seconds).padStart(2,'0');
+}
+updateCountdown();
+setInterval(updateCountdown, 1000);
 
-  var observer = null;
-  function revealObserver() {
-    var items = document.querySelectorAll('.reveal');
-    if (!('IntersectionObserver' in window)) {
-      each(items, function (el) { addClass(el, 'visible'); });
-      return;
-    }
-    if (observer) return;
-    observer = new IntersectionObserver(function (entries) {
-      each(entries, function (entry) {
-        if (entry.isIntersecting) { addClass(entry.target, 'visible'); observer.unobserve(entry.target); }
-      });
-    }, { threshold: 0.08, rootMargin: '0px 0px -3% 0px' });
-    each(items, function (el) { observer.observe(el); });
-  }
+// ---------- Reveal on scroll ----------
+let observer;
+function revealObserver() {
+  if (observer) return;
+  observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: .12, rootMargin: '0px 0px -5% 0px' });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+}
 
-  for (var photoKey in CONFIG.photos) {
-    if (Object.prototype.hasOwnProperty.call(CONFIG.photos, photoKey)) {
-      (function (key, src) {
-        var slots = document.querySelectorAll('[data-photo="' + key + '"]');
-        each(slots, function (slot) {
-          var img = new Image();
-          img.onload = function () { slot.style.backgroundImage = 'url("' + src + '")'; addClass(slot, 'is-loaded'); };
-          img.src = src;
-        });
-      }(photoKey, CONFIG.photos[photoKey]));
-    }
-  }
+// ---------- Автоподстановка фотографий, если файлы добавлены ----------
+Object.entries(CONFIG.photos).forEach(([key, src]) => {
+  document.querySelectorAll(`[data-photo="${key}"]`).forEach(slot => {
+    const img = new Image();
+    img.onload = () => {
+      slot.style.backgroundImage = `url("${src}")`;
+      slot.classList.add('is-loaded');
+    };
+    img.src = src;
+  });
+});
 
-  var storyTabs = document.querySelectorAll('.story-tab');
-  var storyPanels = document.querySelectorAll('.story-panel');
-  each(storyTabs, function (tab) {
-    tab.addEventListener('click', function () {
-      var target = tab.getAttribute('data-story');
-      each(storyTabs, function (btn) {
-        var active = btn === tab; toggleClass(btn, 'is-active', active); btn.setAttribute('aria-selected', active ? 'true' : 'false');
-      });
-      each(storyPanels, function (panel) {
-        var active = panel.getAttribute('data-panel') === target; toggleClass(panel, 'is-active', active); panel.hidden = !active;
-      });
+// ---------- История: интерактивные вкладки ----------
+const storyTabs = document.querySelectorAll('.story-tab');
+const storyPanels = document.querySelectorAll('.story-panel');
+storyTabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    const target = tab.dataset.story;
+    storyTabs.forEach(btn => {
+      const active = btn === tab;
+      btn.classList.toggle('is-active', active);
+      btn.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
+    storyPanels.forEach(panel => {
+      const active = panel.dataset.panel === target;
+      panel.classList.toggle('is-active', active);
+      panel.hidden = !active;
     });
   });
+});
 
-  var form = byId('rsvpForm');
-  var otherAlcoholField = byId('otherAlcoholField');
-  var meatField = byId('meatField');
-  var otherAlcohol = byId('otherAlcohol');
-  var noAlcohol = byId('noAlcohol');
+// ---------- RSVP dynamic fields ----------
+const form = document.getElementById('rsvpForm');
+const otherAlcoholField = document.getElementById('otherAlcoholField');
+const meatField = document.getElementById('meatField');
+const otherAlcohol = document.getElementById('otherAlcohol');
+const noAlcohol = document.getElementById('noAlcohol');
 
-  if (form) {
-    form.addEventListener('change', function (e) {
-      var t = e.target;
-      if (t === otherAlcohol) toggleClass(otherAlcoholField, 'show', !!otherAlcohol.checked);
-      if (t && t.name === 'mainDish') toggleClass(meatField, 'show', t.value === 'Мясо');
-      if (t === noAlcohol && noAlcohol.checked) {
-        each(form.querySelectorAll('input[name="alcohol"]'), function (box) { if (box !== noAlcohol) box.checked = false; });
-        removeClass(otherAlcoholField, 'show');
-      }
-      if (t && t.name === 'alcohol' && t !== noAlcohol && t.checked && noAlcohol) noAlcohol.checked = false;
+form.addEventListener('change', (e) => {
+  if (e.target === otherAlcohol) {
+    otherAlcoholField.classList.toggle('show', otherAlcohol.checked);
+  }
+  if (e.target.name === 'mainDish') {
+    meatField.classList.toggle('show', e.target.value === 'Мясо');
+  }
+  if (e.target === noAlcohol && noAlcohol.checked) {
+    form.querySelectorAll('input[name="alcohol"]').forEach(box => {
+      if (box !== noAlcohol) box.checked = false;
     });
+    otherAlcoholField.classList.remove('show');
+  }
+  if (e.target.name === 'alcohol' && e.target !== noAlcohol && e.target.checked) {
+    noAlcohol.checked = false;
+  }
+});
+
+function serializeForm(formEl) {
+  const fd = new FormData(formEl);
+  const raw = {};
+  for (const [key, value] of fd.entries()) {
+    if (Object.prototype.hasOwnProperty.call(raw, key)) {
+      raw[key] = Array.isArray(raw[key]) ? [...raw[key], value] : [raw[key], value];
+    } else raw[key] = value;
   }
 
-  function formValue(name) {
-    if (!form) return '';
-    var el = form.querySelector('[name="' + name + '"]:checked') || form.querySelector('[name="' + name + '"]');
-    return el ? el.value : '';
-  }
-  function serializeForm() {
-    var alcohol = [];
-    each(form.querySelectorAll('input[name="alcohol"]:checked'), function (el) { alcohol.push(el.value); });
-    return {
-      name: formValue('guestName'), attendance: formValue('attendance'), companion: '', companionName: '', alcohol: alcohol,
-      otherAlcohol: formValue('otherAlcoholText'), mainDish: formValue('mainDish'), meatType: formValue('meatPreference'), otherMeat: '',
-      allergies: formValue('allergies'), notEat: formValue('avoidFoods'), transfer: '', lodging: formValue('stayHelp'),
-      track: formValue('favoriteTrack'), comment: formValue('comment'), submittedAt: new Date().toISOString()
-    };
-  }
+  // Названия ниже совпадают с полями Google Apps Script.
+  return {
+    name: raw.guestName || '',
+    attendance: raw.attendance || '',
+    companion: '',
+    companionName: '',
+    alcohol: raw.alcohol || [],
+    otherAlcohol: raw.otherAlcoholText || '',
+    mainDish: raw.mainDish || '',
+    meatType: raw.meatPreference || '',
+    otherMeat: '',
+    allergies: raw.allergies || '',
+    notEat: raw.avoidFoods || '',
+    transfer: '',
+    lodging: raw.stayHelp || '',
+    track: raw.favoriteTrack || '',
+    comment: raw.comment || '',
+    submittedAt: new Date().toISOString()
+  };
+}
 
-  function submitRSVP(data, done, fail) {
-    if (!CONFIG.rsvpEndpoint) { fail(); return; }
-    var payload = JSON.stringify(data);
-    if (window.fetch) {
-      fetch(CONFIG.rsvpEndpoint, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: payload })
-        .then(function () { try { localStorage.setItem('annaIlyaWeddingRSVP', payload); } catch (e) {} done(); })
-        .catch(fail);
-    } else {
-      try {
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', CONFIG.rsvpEndpoint, true);
-        xhr.setRequestHeader('Content-Type', 'text/plain;charset=utf-8');
-        xhr.onload = function () { try { localStorage.setItem('annaIlyaWeddingRSVP', payload); } catch (e) {} done(); };
-        xhr.onerror = fail; xhr.send(payload);
-      } catch (e) { fail(); }
-    }
+async function submitRSVP(data) {
+  if (!CONFIG.rsvpEndpoint) {
+    throw new Error('RSVP endpoint is not configured');
   }
 
-  if (form) {
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      var submit = form.querySelector('button[type="submit"]');
-      var original = submit ? submit.textContent : '';
-      if (submit) { submit.disabled = true; submit.textContent = 'Сохраняем…'; }
-      submitRSVP(serializeForm(), function () {
-        form.style.display = 'none'; addClass(byId('successMessage'), 'show');
-        if (submit) { submit.disabled = false; submit.textContent = original; }
-      }, function () {
-        alert('Не получилось отправить ответ. Пожалуйста, попробуйте ещё раз.');
-        if (submit) { submit.disabled = false; submit.textContent = original; }
-      });
-    });
+  // Apps Script Web App is on another domain. no-cors lets the browser
+  // send the POST reliably without exposing Telegram secrets to guests.
+  await fetch(CONFIG.rsvpEndpoint, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(data)
+  });
+
+  localStorage.setItem('annaIlyaWeddingRSVP', JSON.stringify(data));
+  return { ok: true };
+}
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const submit = form.querySelector('button[type="submit"]');
+  const original = submit.textContent;
+  submit.disabled = true;
+  submit.textContent = 'Сохраняем…';
+  try {
+    await submitRSVP(serializeForm(form));
+    form.style.display = 'none';
+    document.getElementById('successMessage').classList.add('show');
+  } catch (err) {
+    alert('Не получилось отправить ответ. Пожалуйста, попробуйте ещё раз.');
+    console.error(err);
+  } finally {
+    submit.disabled = false;
+    submit.textContent = original;
   }
+});
 
-  var editResponse = byId('editResponse');
-  if (editResponse) editResponse.addEventListener('click', function () { removeClass(byId('successMessage'), 'show'); if (form) form.style.display = 'grid'; });
+document.getElementById('editResponse').addEventListener('click', () => {
+  document.getElementById('successMessage').classList.remove('show');
+  form.style.display = 'grid';
+});
 
-  // Safety net: if a browser/webview delays animations, never leave the page locked forever.
-  window.setTimeout(function () {
-    if (document.body.classList.contains('locked') && !intro) removeClass(document.body, 'locked');
-  }, 5000);
-}());
+// Ответ хранится локально только как резервная копия после успешной отправки.
