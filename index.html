@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#f6f3ee" />
+  <meta name="description" content="Свадебное приглашение Анны и Ильи — 14 февраля 2027" />
+  <title>Анна & Илья — 14.02.2027</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@300;400;500;600&family=Parisienne&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <meta name="format-detection" content="telephone=no" />
+  <meta name="mobile-web-app-capable" content="yes" />
+
+
+
+</head>
+<body style="background:#fffdfa;">
+  <audio id="weddingMusic" preload="none" loop playsinline>
+    <source src="wedding-music.mp3" type="audio/mpeg">
+  </audio>
+  <div class="music-label" id="musicLabel">Руки Вверх! & Lyriq — Я не отдам тебя никому</div>
+  <button class="music-toggle" id="musicToggle" type="button" aria-label="Включить или выключить музыку">
+    <span class="music-icon">♫</span><span class="pause-icon">Ⅱ</span>
+  </button>
+
+  <!-- INTRO / ENVELOPE -->
+  <section class="intro" id="intro" aria-label="Открыть свадебное приглашение">
+    <canvas id="snowCanvas" aria-hidden="true"></canvas>
+    <div class="intro-vignette" aria-hidden="true"></div>
+
+    <div class="envelope-stage" id="envelopeStage">
+      <div class="ambient-copy">
+        <p class="intro-wedding-title">От земли до Луны и обратно</p>
+        <small>наша история любви</small>
+      </div>
+
+      <div class="envelope" id="envelope">
+        <div class="letter-preview" aria-hidden="true">
+          <div class="letter-monogram">А <span>&</span> И</div>
+          <small>14 февраля 2027</small>
+        </div>
+        <div class="envelope-back"></div>
+        <div class="envelope-front-left"></div>
+        <div class="envelope-front-right"></div>
+        <div class="envelope-front-bottom"></div>
+        <div class="envelope-flap" id="envelopeFlap"></div>
+
+        <div class="seal-arrow" aria-hidden="true">
+          <span class="seal-arrow-text">Нажмите на печать</span>
+          <span class="seal-arrow-line"></span>
+        </div>
+
+        <button class="wax-seal" id="openInvitation" type="button" aria-label="Открыть приглашение">
+          <span class="seal-initials">А <i>&</i> И</span>
+          <span class="seal-date">14.02.2027</span>
+        </button>
+
+        <button class="open-hint" id="openHint" type="button">Открыть приглашение</button>
+      </div>
+    </div>
+  </section>
+
+  <main id="mainContent" class="site" aria-hidden="true">
+    <!-- HERO -->
+    <section class="hero section" id="hero">
+      <div class="section-inner hero-grid">
+        <div class="hero-copy reveal">
+          <span class="eyebrow">14 февраля 2027</span>
+          <h1><span>Анна</span><em>&</em><span>Илья</span></h1>
+          <div class="wedding-title-line" aria-label="Название свадьбы">
+            <span class="moon-mark">☾</span>
+            <span>От земли до Луны и обратно</span>
+            <span class="moon-mark mirror">☾</span>
+          </div>
+          <p class="hero-quote">«14 февраля — день, когда наши души воссоединились»</p>
+          <p class="hero-note">В этот день исполнится ровно два года с момента начала нашей истории. И именно в этот день мы хотим начать новую главу — уже как семья.</p>
+          <a class="scroll-cue" href="#guests" aria-label="Прокрутить ниже"><span></span></a>
+        </div>
+
+        <!-- ЗАМЕНИТЕ ФОТО: assets/couple-hero.jpg -->
+        <div class="hero-visual reveal">
+          <div class="hero-floral hero-floral-left" aria-hidden="true"></div>
+          <div class="hero-floral hero-floral-right" aria-hidden="true"></div>
+          <div class="hero-photo photo-slot" data-photo="couple-hero">
+            <div class="photo-placeholder soft-photo">
+              <span>Ваше главное фото</span>
+              <small>assets/couple-hero.jpg</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GUEST LETTER -->
+    <section class="guest-letter section" id="guests">
+      <div class="section-inner narrow reveal">
+        <div class="guest-card floral-card">
+          <span class="eyebrow">для вас</span>
+          <h2>Дорогие родные и близкие</h2>
+          <div class="ornament">✦</div>
+          <p>Совсем скоро в нашей жизни произойдёт одно из самых важных событий — мы станем семьёй.</p>
+          <p>Нам очень хочется разделить этот день с людьми, которых мы любим и ценим. Будем счастливы видеть вас рядом с нами 14 февраля 2027 года.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- STORY -->
+    <section class="story section mist" id="story">
+      <div class="section-inner story-grid">
+        <!-- ЗАМЕНИТЕ ФОТО: assets/couple-story.jpg -->
+        <div class="story-visual-wrap reveal">
+          <div class="story-visual photo-slot" data-photo="couple-story">
+            <div class="photo-placeholder soft-photo"><span>Фото вашей истории</span><small>assets/couple-story.jpg</small></div>
+          </div>
+        </div>
+
+        <div class="story-copy reveal">
+          <span class="eyebrow">как всё начиналось</span>
+          <h2>Наша история</h2>
+          <p class="story-intro">Наша история — про выбор быть рядом, несмотря на обстоятельства.</p>
+
+          <div class="story-tabs" role="tablist" aria-label="Ключевые моменты нашей истории">
+            <button class="story-tab is-active" type="button" role="tab" aria-selected="true" data-story="0">Начало</button>
+            <button class="story-tab" type="button" role="tab" aria-selected="false" data-story="1">Через трудности</button>
+            <button class="story-tab" type="button" role="tab" aria-selected="false" data-story="2">Год армии</button>
+            <button class="story-tab" type="button" role="tab" aria-selected="false" data-story="3">Сегодня</button>
+          </div>
+
+          <div class="story-panels">
+            <article class="story-panel is-active" data-panel="0">
+              <h3>Всё началось с настоящего чувства</h3>
+              <p>Илья добился Анну как настоящий мужчина — поступками, заботой и уверенностью в своих чувствах.</p>
+            </article>
+            <article class="story-panel" data-panel="1" hidden>
+              <h3>Наш путь не всегда был простым</h3>
+              <p>Мы прошли через осуждение окружающих из‑за разницы в возрасте, притирку характеров и взросление в отношениях.</p>
+            </article>
+            <article class="story-panel" data-panel="2" hidden>
+              <h3>Одним из самых сложных испытаний стал год армии</h3>
+              <p>Расстояние и ожидание не разрушили нас — наоборот, помогли ещё сильнее понять, насколько мы дороги друг другу.</p>
+            </article>
+            <article class="story-panel" data-panel="3" hidden>
+              <h3>Любовь стала только крепче</h3>
+              <p>Несмотря ни на что, мы продолжаем любить, уважать, поддерживать и ценить друг друга. Теперь впереди наша новая глава — семья.</p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VENUE -->
+    <section class="venue section soft" id="venue">
+      <div class="section-inner venue-grid">
+        <!-- ЗАМЕНИТЕ ФОТО: assets/saint-lake.jpg -->
+        <div class="venue-photo-wrap reveal">
+          <div class="venue-photo photo-slot" data-photo="venue">
+            <div class="photo-placeholder soft-photo"><span>Фото площадки</span><small>assets/saint-lake.jpg</small></div>
+          </div>
+          <div class="venue-photo-secondary photo-slot" data-photo="venue-alt">
+            <div class="photo-placeholder soft-photo"><span>Дворец торжеств</span><small>assets/saint-lake-2.jpg</small></div>
+          </div>
+        </div>
+
+        <div class="venue-copy reveal floral-card">
+          <span class="eyebrow">место встречи</span>
+          <h2>SAINT LAKE</h2>
+          <p class="venue-city">г. Шатура</p>
+          <p class="venue-hall">Зал — <strong>Дворец торжеств</strong></p>
+          <p>Парк-отель SAINT LAKE — место, где зимний воздух, свет и спокойная природа станут частью нашего самого важного дня.</p>
+          <p class="venue-note">Будем ждать вас в атмосфере уюта, нежности и красивого февральского вечера.</p>
+          <!-- ИЗМЕНИТЕ ССЫЛКУ НИЖЕ на реальную ссылку Яндекс Карт -->
+          <a class="btn" id="mapButton" href="https://yandex.ru/maps/?text=SAINT%20LAKE%20Шатура" target="_blank" rel="noopener">Открыть на карте</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- DRESS CODE -->
+    <section class="dress section mist" id="dresscode">
+      <div class="section-inner">
+        <div class="section-heading narrow reveal">
+          <span class="eyebrow">wedding palette</span>
+          <h2>Дресс-код</h2>
+          <p>Нам будет особенно приятно, если в этот день вы поддержите цветовую палитру нашей свадьбы.</p>
+        </div>
+        <div class="palette reveal" aria-label="Цветовая палитра">
+          <span style="--swatch:#dbe8ef"><b>Нежно-голубой</b></span>
+          <span style="--swatch:#f5f1e8"><b>Молочный</b></span>
+          <span style="--swatch:#f1e6df"><b>Нежно-розовый</b></span>
+          <span style="--swatch:#eee5d7"><b>Кремовый</b></span>
+          <span style="--swatch:#d8c9b6"><b>Бежевый</b></span>
+          <span style="--swatch:#e4d7c0"><b>Champagne</b></span>
+          <span style="--swatch:#e7ddd6"><b>Пастельные оттенки</b></span>
+        </div>
+
+        <div class="looks-grid">
+          <article class="look-card reveal">
+            <!-- ЗАМЕНИТЕ ФОТО: assets/dress-women.jpg -->
+            <div class="look-image photo-slot" data-photo="dress-women">
+              <div class="photo-placeholder fashion"><span>Женские образы</span><small>assets/dress-women.jpg</small></div>
+            </div>
+            <h3>Для девушек</h3>
+            <p>Длинные и коктейльные платья, элегантные костюмы, струящиеся ткани и нежные пастельные оттенки.</p>
+          </article>
+          <article class="look-card reveal">
+            <!-- ЗАМЕНИТЕ ФОТО: assets/dress-men.jpg -->
+            <div class="look-image photo-slot" data-photo="dress-men">
+              <div class="photo-placeholder fashion"><span>Мужские образы</span><small>assets/dress-men.jpg</small></div>
+            </div>
+            <h3>Для мужчин</h3>
+            <p>Классические костюмы, светлые рубашки, серые, бежевые, голубые и тёмно-синие оттенки с аккуратными аксессуарами.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- WISHES -->
+    <section class="wishes section" id="wishes">
+      <div class="section-inner narrow">
+        <div class="section-heading reveal">
+          <span class="eyebrow">несколько слов от нас</span>
+          <h2>Наши пожелания</h2>
+        </div>
+        <div class="wish-list">
+          <article class="wish reveal"><span>01</span><div><h3>Вместо цветов</h3><p>Ваше присутствие — уже самый важный подарок для нас. А если вы захотите порадовать нас дополнительно, вместо букета мы будем благодарны за вклад в нашу общую мечту.</p></div></article>
+          <article class="wish reveal"><span>02</span><div><h3>Поддержите палитру свадьбы</h3><p>Мы очень стараемся создать особенную атмосферу этого дня и будем рады, если вы поддержите выбранные нами оттенки в своих образах.</p></div></article>
+          <article class="wish reveal"><span>03</span><div><h3>Подтвердите присутствие заранее</h3><p>Пожалуйста, заполните анкету ниже — это поможет нам продумать всё до мелочей и сделать праздник комфортным для каждого гостя.</p></div></article>
+          <article class="wish reveal"><span>04</span><div><h3>Аллергии и предпочтения</h3><p>Если у вас есть пищевая аллергия, непереносимость продуктов или особенности питания, обязательно сообщите нам об этом в анкете.</p></div></article>
+          <article class="wish reveal"><span>05</span><div><h3>Пожалуйста, приезжайте немного заранее</h3><p>Нам будет спокойно и приятно знать, что все наши гости успеют собраться до начала церемонии.</p></div></article>
+        </div>
+      </div>
+    </section>
+
+    <!-- RSVP -->
+    <section class="rsvp section soft" id="rsvp">
+      <div class="section-inner rsvp-wrap">
+        <div class="rsvp-intro reveal">
+          <span class="eyebrow">rsvp</span>
+          <h2>Будете ли вы с нами?</h2>
+          <p>Пожалуйста, заполните небольшую анкету. Это поможет нам сделать праздник комфортным для каждого гостя.</p>
+        </div>
+
+        <form class="rsvp-form reveal" id="rsvpForm">
+          <label class="field"><span>Имя и фамилия гостя</span><input type="text" name="guestName" required placeholder="Например: Мария Иванова" /></label>
+
+          <fieldset class="field">
+            <legend>Вы сможете присутствовать?</legend>
+            <div class="choice-row">
+              <label class="choice"><input type="radio" name="attendance" value="С радостью буду!" required /><span>С радостью буду!</span></label>
+              <label class="choice"><input type="radio" name="attendance" value="К сожалению, не смогу" /><span>К сожалению, не смогу</span></label>
+            </div>
+          </fieldset>
+
+          <fieldset class="field full">
+            <legend>Предпочтения по алкоголю</legend>
+            <div class="checkbox-grid">
+              <label class="check"><input type="checkbox" name="alcohol" value="Шампанское / игристое"><span>Шампанское / игристое</span></label>
+              <label class="check"><input type="checkbox" name="alcohol" value="Белое вино"><span>Белое вино</span></label>
+              <label class="check"><input type="checkbox" name="alcohol" value="Красное вино"><span>Красное вино</span></label>
+              <label class="check"><input type="checkbox" name="alcohol" value="Водка"><span>Водка</span></label>
+              <label class="check"><input type="checkbox" name="alcohol" value="Виски"><span>Виски</span></label>
+              <label class="check"><input type="checkbox" name="alcohol" value="Коньяк"><span>Коньяк</span></label>
+              <label class="check"><input id="otherAlcohol" type="checkbox" name="alcohol" value="Другой алкоголь"><span>Другой алкоголь</span></label>
+              <label class="check"><input id="noAlcohol" type="checkbox" name="alcohol" value="Не пью алкоголь"><span>Не пью алкоголь</span></label>
+            </div>
+          </fieldset>
+          <label class="field conditional full" id="otherAlcoholField"><span>Какой алкоголь вы предпочитаете?</span><input type="text" name="otherAlcoholText" placeholder="Напишите свой вариант" /></label>
+
+          <fieldset class="field full">
+            <legend>Основное горячее блюдо</legend>
+            <div class="choice-row three">
+              <label class="choice"><input type="radio" name="mainDish" value="Рыба" required /><span>Рыба</span></label>
+              <label class="choice"><input type="radio" name="mainDish" value="Мясо" /><span>Мясо</span></label>
+              <label class="choice"><input type="radio" name="mainDish" value="Вегетарианское" /><span>Вегетарианское</span></label>
+            </div>
+          </fieldset>
+          <fieldset class="field conditional full" id="meatField">
+            <legend>Какое мясо вы предпочитаете?</legend>
+            <div class="choice-row">
+              <label class="choice"><input type="radio" name="meatPreference" value="Курица"><span>Курица</span></label>
+              <label class="choice"><input type="radio" name="meatPreference" value="Свинина"><span>Свинина</span></label>
+            </div>
+          </fieldset>
+
+          <label class="field"><span>Есть ли у вас аллергия или непереносимость каких-либо продуктов?</span><textarea name="allergies" rows="3" placeholder="Например: орехи, морепродукты, лактоза"></textarea></label>
+          <label class="field"><span>Есть ли продукты, которые вы не едите?</span><textarea name="avoidFoods" rows="3" placeholder="Например: не ем рыбу / грибы / острое"></textarea></label>
+
+          <!-- ЕСЛИ ПОМОЩЬ С РАЗМЕЩЕНИЕМ НЕ НУЖНА, УДАЛИТЕ ЭТОТ FIELDSET -->
+          <fieldset class="field">
+            <legend>Нужна ли вам помощь с размещением / ночёвкой?</legend>
+            <div class="choice-row">
+              <label class="choice"><input type="radio" name="stayHelp" value="Да" /><span>Да</span></label>
+              <label class="choice"><input type="radio" name="stayHelp" value="Нет" /><span>Нет</span></label>
+            </div>
+          </fieldset>
+
+          <label class="field"><span>Какую песню вы точно хотите услышать на нашей свадьбе?</span><input type="text" name="favoriteTrack" placeholder="Напишите любимый трек" /></label>
+          <label class="field"><span>Комментарий или пожелание</span><textarea name="comment" rows="3" placeholder="Любые детали, которые нам важно знать"></textarea></label>
+
+          <div class="form-actions full">
+            <button class="btn submit" type="submit">Отправить Анне и Илье</button>
+            <p class="form-note">После отправки ваш ответ сохранится у Анны и Ильи. Спасибо, что помогаете нам подготовиться к этому дню 🤍</p>
+          </div>
+        </form>
+
+        <div class="success-message" id="successMessage" role="status" aria-live="polite">
+          <span>♡</span>
+          <h3>Спасибо! Ваш ответ сохранён</h3>
+          <p>До встречи 14 февраля!</p>
+          <button type="button" class="text-button" id="editResponse">Изменить ответ</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- COUNTDOWN -->
+    <section class="countdown-section section mist" id="countdown">
+      <div class="section-inner narrow reveal">
+        <span class="eyebrow">до нашей свадьбы</span>
+        <h2>Каждый день — чуть ближе</h2>
+        <div class="countdown" aria-live="polite">
+          <div><strong id="days">000</strong><span>дней</span></div>
+          <div><strong id="hours">00</strong><span>часов</span></div>
+          <div><strong id="minutes">00</strong><span>минут</span></div>
+          <div><strong id="seconds">00</strong><span>секунд</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FINALE -->
+    <section class="finale section" id="finale">
+      <canvas id="finalSnowCanvas" aria-hidden="true"></canvas>
+      <div class="finale-content reveal">
+        <h2>До встречи в самый важный день нашей истории.</h2>
+        <div class="final-names">Анна <i>&</i> Илья</div>
+        <div class="final-date">14.02.2027</div>
+        <p>С любовью, А & И</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
